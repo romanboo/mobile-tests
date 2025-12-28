@@ -4,7 +4,6 @@ import com.codeborne.selenide.WebDriverProvider;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import javax.annotation.Nonnull;
@@ -12,34 +11,50 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class BrowserstackDriver implements WebDriverProvider {
+
+    private static final String USERNAME = "romanboo_IA4dnz";
+    private static final String ACCESS_KEY = "y7tQnHW9e42oNtYRUGRs";
+    private static final String APP = "bs://sample.app"; // Демо приложение
+
     @Nonnull
     @Override
     public WebDriver createDriver(@Nonnull Capabilities capabilities) {
+        System.out.println("=== Creating BrowserStack Session (Simple) ===");
+
         MutableCapabilities caps = new MutableCapabilities();
 
-        // Set your access credentials
-        caps.setCapability("browserstack.user", "qaguru_ti9G5S");
-        caps.setCapability("browserstack.key", "5yrxu4nFTKkRExUAhqxh");
+        // 1. Базовые Appium capabilities
+        caps.setCapability("platformName", "Android");
+        caps.setCapability("deviceName", "Google Pixel 7");
+        caps.setCapability("platformVersion", "13.0");
+        caps.setCapability("app", APP);
+        caps.setCapability("automationName", "UIAutomator2");
 
-        // Set URL of the application under test
-        caps.setCapability("app", "bs://c700ce60cf13ae8ed97705a55b8e022f13c5827c");
+        // 2. BrowserStack authentication
+        caps.setCapability("browserstack.user", USERNAME);
+        caps.setCapability("browserstack.key", ACCESS_KEY);
 
-        // Specify device and os_version for testing
-        caps.setCapability("device", "Google Pixel 3");
-        caps.setCapability("os_version", "9.0");
+        // 3. BrowserStack project info
+        caps.setCapability("project", "Mobile Tests");
+        caps.setCapability("build", "Test Build");
+        caps.setCapability("name", "Wikipedia Test");
 
-        // Set other BrowserStack capabilities
-        caps.setCapability("project", "First Java Project");
-        caps.setCapability("build", "browserstack-build-1");
-        caps.setCapability("name", "first_test");
+        // 4. Дополнительные настройки
+        caps.setCapability("browserstack.debug", "true");
+        caps.setCapability("browserstack.networkLogs", "true");
+        caps.setCapability("browserstack.idleTimeout", "300");
 
-        // Initialise the remote Webdriver using BrowserStack remote URL
-        // and desired capabilities defined above
         try {
-            return new RemoteWebDriver(
+            System.out.println("Using device: Google Pixel 7 (Android 13.0)");
+            System.out.println("App: " + APP);
+
+            RemoteWebDriver driver = new RemoteWebDriver(
                     new URL("https://hub.browserstack.com/wd/hub"), caps);
+
+            System.out.println("✅ BrowserStack session created!");
+            return driver;
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to create BrowserStack driver", e);
         }
     }
 }

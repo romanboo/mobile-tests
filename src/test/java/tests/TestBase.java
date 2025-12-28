@@ -19,23 +19,39 @@ public class TestBase {
         Configuration.browser = BrowserstackDriver.class.getName();
         Configuration.browserSize = null;
         Configuration.timeout = 30000;
+        Configuration.pageLoadTimeout = 30000;
     }
 
     @BeforeEach
     void beforeEach() {
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
-        open();
+        try {
+            open();
+        } catch (Exception e) {
+            System.err.println("Failed to open browser: " + e.getMessage());
+            throw e;
+        }
     }
 
     @AfterEach
     void addAttachments() {
-        String sessionId = Selenide.sessionId().toString();
-        System.out.println(sessionId);
+        try {
+            // Получаем sessionId только если драйвер существует
+            String sessionId = Selenide.sessionId() != null ?
+                    Selenide.sessionId().toString() : "NO_SESSION_ID";
 
-//        Attach.screenshotAs("Last screenshot"); // todo fix
-        Attach.pageSource();
-        closeWebDriver();
+            System.out.println("Session ID: " + sessionId);
 
-        Attach.addVideo(sessionId);
+            // Attach.screenshotAs("Last screenshot");
+            Attach.pageSource();
+
+            // Добавляем видео
+            Attach.addVideo(sessionId);
+
+        } catch (Exception e) {
+            System.err.println("Error in attachments: " + e.getMessage());
+        } finally {
+            closeWebDriver();
+        }
     }
 }
