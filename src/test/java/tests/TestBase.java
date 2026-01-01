@@ -16,42 +16,28 @@ import static com.codeborne.selenide.Selenide.open;
 public class TestBase {
     @BeforeAll
     static void beforeAll() {
-        Configuration.browser = BrowserstackDriver.class.getName();
         Configuration.browserSize = null;
-        Configuration.timeout = 30000;
-        Configuration.pageLoadTimeout = 30000;
+        Configuration.browser = BrowserstackDriver.class.getName();
+        // Отключаем pageLoadTimeout, т.к. не поддерживается в мобильных сессиях
+        Configuration.pageLoadTimeout = -1;
+        // Опционально: установи таймаут для элементов
+        Configuration.timeout = 10000;
     }
 
     @BeforeEach
     void beforeEach() {
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
-        try {
-            open();
-        } catch (Exception e) {
-            System.err.println("Failed to open browser: " + e.getMessage());
-            throw e;
-        }
+        open();
     }
 
     @AfterEach
     void addAttachments() {
-        try {
-            // Получаем sessionId только если драйвер существует
-            String sessionId = Selenide.sessionId() != null ?
-                    Selenide.sessionId().toString() : "NO_SESSION_ID";
+        String sessionId = Selenide.sessionId().toString();
+        System.out.println(sessionId);
 
-            System.out.println("Session ID: " + sessionId);
+        Attach.pageSource();
+        closeWebDriver();
 
-            // Attach.screenshotAs("Last screenshot");
-            Attach.pageSource();
-
-            // Добавляем видео
-            Attach.addVideo(sessionId);
-
-        } catch (Exception e) {
-            System.err.println("Error in attachments: " + e.getMessage());
-        } finally {
-            closeWebDriver();
-        }
+        Attach.addVideo(sessionId);
     }
 }

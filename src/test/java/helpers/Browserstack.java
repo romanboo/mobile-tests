@@ -1,14 +1,18 @@
 package helpers;
 
+import config.AuthConfig;
+import org.aeonbits.owner.ConfigFactory;
+
 import static io.restassured.RestAssured.given;
 
 public class Browserstack {
+    private static final AuthConfig config = ConfigFactory.create(AuthConfig.class, System.getProperties());
 
     public static String videoUrl(String sessionId) {
         String url = String.format("https://api.browserstack.com/app-automate/sessions/%s.json", sessionId);
 
         return given()
-                .auth().basic("romanboo_IA4dnz", "y7tQnHW9e42oNtYRUGRs")
+                .auth().basic(config.username(), config.password())
                 .get(url)
                 .then()
                 .log().status()
