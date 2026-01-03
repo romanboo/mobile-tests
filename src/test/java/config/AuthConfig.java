@@ -3,9 +3,12 @@ package config;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
-        "classpath:auth.properties"
+        "classpath:authData.properties"
 })
 public interface AuthConfig extends Config {
-    String username();
-    String password();
+    @Key("browserStackUser")
+    String bsLogin();
+
+    @Key("browserStackPassword")
+    String bsPassword();
 }
