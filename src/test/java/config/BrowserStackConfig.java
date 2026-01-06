@@ -9,7 +9,7 @@ import org.aeonbits.owner.Config;
 })
 public interface BrowserStackConfig extends Config {
 
-    @DefaultValue("bs://1f014cc65a5a246fcf31a453ae00dbe64c294925")  // Ваше приложение
+    @DefaultValue("bs://f3b370e92873f9032c4c5c247deb604a539b1f95")
     String browserstackApp();
 
     @DefaultValue("Google Pixel 7")

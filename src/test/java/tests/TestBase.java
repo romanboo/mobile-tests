@@ -23,14 +23,16 @@ public class TestBase {
 
         Configuration.browserSize = null;
         Configuration.browser = BrowserStackMobileDriver.class.getName();
-        Configuration.timeout = 15000;
+        Configuration.timeout = 30000; // Увеличиваем таймаут
         Configuration.pageLoadStrategy = "none";
-        Configuration.remoteReadTimeout = 20000;
-        Configuration.remoteConnectionTimeout = 20000;
-        Configuration.savePageSource = true; // Включаем сохранение page source для отладки
+        Configuration.remoteReadTimeout = 40000;
+        Configuration.remoteConnectionTimeout = 40000;
+        Configuration.savePageSource = true;
         Configuration.fastSetValue = true;
 
-        // Отключаем лишние логи, чтобы не засорять вывод
+        // Увеличиваем время ожидания для мобильных тестов
+        Configuration.pageLoadTimeout = 60000;
+
         System.setProperty("selenide.logs.enabled", "false");
     }
 
@@ -39,7 +41,14 @@ public class TestBase {
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true));
+
+        // Даем больше времени для загрузки приложения
+        Configuration.timeout = 30000;
+
         open();
+
+        // Ждем загрузки приложения
+        Selenide.sleep(5000);
     }
 
     @AfterEach
@@ -48,15 +57,12 @@ public class TestBase {
         System.out.println("=== TEST FINISHED ===");
         System.out.println("Session ID: " + sessionId);
 
-        // Собираем максимум информации для отладки
         try {
             Attach.screenshotAs("Final screenshot");
             Attach.pageSource();
-            Attach.getElementTree(); // Добавляем XML дерево элементов
-            Attach.getCurrentActivity(); // Добавляем текущую активность
-            Attach.getSessionInfo(); // Добавляем информацию о сессии
-
-            // Также можно сохранить дополнительный скриншот с повторными попытками
+            Attach.getElementTree();
+            Attach.getCurrentActivity();
+            Attach.getSessionInfo();
             Attach.takeScreenshotWithRetry("Final screenshot with retry");
 
         } catch (Exception e) {
