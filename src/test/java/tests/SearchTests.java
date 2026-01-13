@@ -81,8 +81,6 @@ public class SearchTests extends TestBase {
                         .getText();
                 System.out.println("First result: " + firstResult);
 
-                // Пробуем кликнуть разными способами
-                System.out.println("Trying to click...");
 
                 // Способ 1: Простой клик
                 $$(By.id("org.wikipedia.alpha:id/page_list_item_title"))
@@ -90,9 +88,6 @@ public class SearchTests extends TestBase {
                         .click();
 
                 Selenide.sleep(5000);
-
-                // Проверяем, что изменилось
-                System.out.println("After click, checking state...");
 
                 // Проверяем поле поиска
                 boolean searchVisible = $(By.id("org.wikipedia.alpha:id/search_src_text")).isDisplayed();
