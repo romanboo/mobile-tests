@@ -17,64 +17,99 @@ public class TestBase {
 
     @BeforeAll
     static void beforeAll() {
+        // Устанавливаем устройство по умолчанию
         if (System.getProperty("device") == null) {
             System.setProperty("device", "android");
         }
 
-        Configuration.browserSize = null;
+        System.out.println("=== BROWSERSTACK TEST CONFIGURATION ===");
+        System.out.println("Device: " + System.getProperty("device"));
+
+        // Используем BrowserStack драйвер
         Configuration.browser = BrowserStackMobileDriver.class.getName();
-        Configuration.timeout = 30000; // Увеличиваем таймаут
+
+        // Общие настройки Selenide
+        Configuration.browserSize = null;
+        Configuration.timeout = 30000;
         Configuration.pageLoadStrategy = "none";
-        Configuration.remoteReadTimeout = 40000;
-        Configuration.remoteConnectionTimeout = 40000;
         Configuration.savePageSource = true;
         Configuration.fastSetValue = true;
-
-        // Увеличиваем время ожидания для мобильных тестов
         Configuration.pageLoadTimeout = 60000;
 
+        // Отключаем логи по умолчанию
         System.setProperty("selenide.logs.enabled", "false");
+
+        System.out.println("Timeout: " + Configuration.timeout + "ms");
+        System.out.println("==========================");
     }
 
     @BeforeEach
     void beforeEach() {
+        // Настройка Allure
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
                 .screenshots(true)
-                .savePageSource(true));
+                .savePageSource(true)
+                .includeSelenideSteps(true));
 
-        // Даем больше времени для загрузки приложения
-        Configuration.timeout = 30000;
+        System.out.println("Opening application on BrowserStack...");
 
+        // Открываем приложение
         open();
 
-        // Ждем загрузки приложения
+        // Ждем загрузку приложения
         Selenide.sleep(5000);
+
+        System.out.println("Application ready for testing");
     }
 
     @AfterEach
     void addAttachments() {
-        String sessionId = Selenide.sessionId().toString();
-        System.out.println("=== TEST FINISHED ===");
+        String sessionId = Selenide.sessionId() != null ? Selenide.sessionId().toString() : "null";
+        System.out.println("=== COLLECTING ATTACHMENTS ===");
         System.out.println("Session ID: " + sessionId);
 
-        try {
-            Attach.screenshotAs("Final screenshot");
-            Attach.pageSource();
-            Attach.getElementTree();
-            Attach.getCurrentActivity();
-            Attach.getSessionInfo();
-            Attach.takeScreenshotWithRetry("Final screenshot with retry");
+        // Собираем аттачменты
+        collectAllAttachments();
 
-        } catch (Exception e) {
-            System.out.println("Failed to collect attachments: " + e.getMessage());
-        }
-
+        System.out.println("Closing web driver...");
         closeWebDriver();
 
-        if (sessionId != null && !sessionId.equals("null")) {
-            Attach.addVideo(sessionId);
-        } else {
-            System.out.println("No session ID available for video");
+        // Добавляем видео для BrowserStack
+        if (sessionId != null && !"null".equals(sessionId)) {
+            System.out.println("Adding BrowserStack video...");
+            try {
+                Attach.addVideo(sessionId);
+            } catch (Exception e) {
+                System.out.println("Failed to add video: " + e.getMessage());
+            }
         }
+
+        System.out.println("=== BROWSERSTACK TEST COMPLETE ===");
+    }
+
+    private void collectAllAttachments() {
+        try { Attach.screenshotAs("Final screenshot"); } catch (Exception e) { logError("screenshot", e); }
+        try { Attach.pageSource(); } catch (Exception e) { logError("page source", e); }
+        try { Attach.getElementTree(); } catch (Exception e) { logError("element tree", e); }
+        try { Attach.getCurrentActivity(); } catch (Exception e) { logError("current activity", e); }
+        try { Attach.getSessionInfo(); } catch (Exception e) { logError("session info", e); }
+        try { Attach.getDeviceInfo(); } catch (Exception e) { logError("device info", e); }
+        try { Attach.getScreenDimensions(); } catch (Exception e) { logError("screen dimensions", e); }
+        try { Attach.takeScreenshotWithRetry("Final screenshot with retry"); } catch (Exception e) { logError("retry screenshot", e); }
+    }
+
+    private void logError(String attachmentName, Exception e) {
+        System.out.println("Failed to collect " + attachmentName + ": " + e.getMessage());
+    }
+
+    // Вспомогательные методы для тестов
+    protected void waitSeconds(int seconds) {
+        System.out.println("Waiting " + seconds + " seconds...");
+        Selenide.sleep(seconds * 1000);
+    }
+
+    protected void takeScreenshot(String name) {
+        System.out.println("Taking screenshot: " + name);
+        Selenide.screenshot(name);
     }
 }

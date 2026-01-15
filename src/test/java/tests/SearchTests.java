@@ -15,12 +15,13 @@ import static com.codeborne.selenide.Selenide.$$;
 import static io.appium.java_client.AppiumBy.*;
 import static io.qameta.allure.Allure.step;
 
-@DisplayName("Search tests")
+@DisplayName("Search tests (BrowserStack)")
 public class SearchTests extends TestBase {
 
     @Test
     @Tag("android")
-    @DisplayName("Search for Appium")
+    @Tag("browserstack")
+    @DisplayName("Search for Appium on BrowserStack")
     void searchForAppiumTest() {
         step("Skip onboarding", () -> {
             $(By.id("org.wikipedia.alpha:id/fragment_onboarding_skip_button"))
@@ -49,8 +50,9 @@ public class SearchTests extends TestBase {
 
     @Test
     @Tag("android")
-    @DisplayName("Debug: Try to open article")
-    void debugOpenArticleTest() {
+    @Tag("browserstack")
+    @DisplayName("Try to open article on BrowserStack")
+    void openArticleTest() {
         step("Skip onboarding", () -> {
             $(By.id("org.wikipedia.alpha:id/fragment_onboarding_skip_button"))
                     .shouldBe(visible, Duration.ofSeconds(5))
@@ -82,7 +84,7 @@ public class SearchTests extends TestBase {
                 System.out.println("First result: " + firstResult);
 
 
-                // Способ 1: Простой клик
+                // Простой клик
                 $$(By.id("org.wikipedia.alpha:id/page_list_item_title"))
                         .first()
                         .click();

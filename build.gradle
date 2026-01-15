@@ -54,6 +54,8 @@ tasks.withType(Test) {
         }
     }
 }
+
+// Старые задачи
 tasks.register('iosTests', Test) {
     useJUnitPlatform {
         includeTags("ios")
@@ -64,4 +66,27 @@ tasks.register('androidTests', Test) {
     useJUnitPlatform {
         includeTags("android")
     }
+}
+
+// НОВЫЕ ЗАДАЧИ ДЛЯ РАЗДЕЛЕНИЯ
+tasks.register('browserstackTests', Test) {
+    description = 'Run BrowserStack tests only'
+    group = 'verification'
+    useJUnitPlatform {
+        includeTags("browserstack")
+    }
+}
+
+tasks.register('localEmulatorTests', Test) {
+    description = 'Run local emulator tests only'
+    group = 'verification'
+    useJUnitPlatform {
+        includeTags("local")
+    }
+}
+
+tasks.register('allTests', Test) {
+    description = 'Run all tests (use with caution)'
+    group = 'verification'
+    useJUnitPlatform()
 }
