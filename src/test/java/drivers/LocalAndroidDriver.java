@@ -18,22 +18,15 @@ public class LocalAndroidDriver implements WebDriverProvider {
     public WebDriver createDriver(@Nonnull Capabilities capabilities) {
         UiAutomator2Options options = new UiAutomator2Options();
 
-        // === КОНФИГУРАЦИЯ ДЛЯ PIXEL 4 API 30 ===
 
-        // 1. Базовые настройки устройства
         options.setPlatformName("Android");
         options.setPlatformVersion("11.0"); // API 30 = Android 11.0
         options.setDeviceName("Pixel_4_API_30");
         options.setAutomationName("UIAutomator2");
 
-        // 2. Используем уже УСТАНОВЛЕННОЕ приложение
-        // Ваш APK: app-alpha-universal-release.apk
-        // Пакет: org.wikipedia.alpha
         options.setAppPackage("org.wikipedia.alpha");
         options.setAppActivity("org.wikipedia.main.MainActivity");
 
-        // 3. Настройки сброса - ВАЖНО: без fullReset!
-        // Устанавливаем в false, так как приложение уже установлено
         boolean cleanStart = Boolean.parseBoolean(System.getProperty("clean.start", "true"));
 
         if (cleanStart) {
@@ -48,14 +41,12 @@ public class LocalAndroidDriver implements WebDriverProvider {
             options.setFullReset(false);
         }
 
-        // 4. Дополнительные настройки
         options.setAutoGrantPermissions(true);
         options.setNewCommandTimeout(Duration.ofSeconds(300));
         options.setCapability("appWaitActivity", "org.wikipedia.*");
         options.setCapability("appWaitDuration", 30000);
         options.setCapability("appWaitForLaunch", true);
 
-        // 5. Настройки для отладки
         options.setCapability("printPageSourceOnFindFailure", true);
         options.setCapability("adbExecTimeout", 60000);
         options.setCapability("ignoreUnimportantViews", true);

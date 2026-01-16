@@ -25,15 +25,13 @@ public class LocalTestBase {
 
         // Настройки для локального эмулятора
         Configuration.browserSize = null;
-        Configuration.timeout = 60000; // 60 секунд для медленного эмулятора
+        Configuration.timeout = 60000;
         Configuration.pageLoadStrategy = "none";
         Configuration.savePageSource = true;
         Configuration.fastSetValue = true;
 
-        // Отключаем pageLoadTimeout для Appium (не поддерживается)
         Configuration.pageLoadTimeout = 0;
 
-        // Для отладки можно включить
         boolean debugMode = Boolean.parseBoolean(System.getProperty("debug", "false"));
         if (debugMode) {
             Configuration.screenshots = true;
@@ -47,7 +45,6 @@ public class LocalTestBase {
 
     @BeforeEach
     void beforeEach() {
-        // Настройка Allure
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true)
@@ -56,14 +53,12 @@ public class LocalTestBase {
         System.out.println("Launching Wikipedia Alpha app on emulator...");
 
         try {
-            // Открываем приложение
+
             open();
 
-            // Эмулятору нужно больше времени
             System.out.println("Waiting for app to launch (5 seconds)...");
             Selenide.sleep(1000);
 
-            // Проверяем, что приложение запустилось
             System.out.println("App launch attempt complete");
 
         } catch (Exception e) {

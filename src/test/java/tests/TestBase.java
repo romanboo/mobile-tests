@@ -17,7 +17,6 @@ public class TestBase {
 
     @BeforeAll
     static void beforeAll() {
-        // Устанавливаем устройство по умолчанию
         if (System.getProperty("device") == null) {
             System.setProperty("device", "android");
         }
@@ -25,10 +24,8 @@ public class TestBase {
         System.out.println("=== BROWSERSTACK TEST CONFIGURATION ===");
         System.out.println("Device: " + System.getProperty("device"));
 
-        // Используем BrowserStack драйвер
         Configuration.browser = BrowserStackMobileDriver.class.getName();
 
-        // Общие настройки Selenide
         Configuration.browserSize = null;
         Configuration.timeout = 30000;
         Configuration.pageLoadStrategy = "none";
@@ -36,7 +33,6 @@ public class TestBase {
         Configuration.fastSetValue = true;
         Configuration.pageLoadTimeout = 60000;
 
-        // Отключаем логи по умолчанию
         System.setProperty("selenide.logs.enabled", "false");
 
         System.out.println("Timeout: " + Configuration.timeout + "ms");
@@ -45,7 +41,6 @@ public class TestBase {
 
     @BeforeEach
     void beforeEach() {
-        // Настройка Allure
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true)
@@ -53,10 +48,8 @@ public class TestBase {
 
         System.out.println("Opening application on BrowserStack...");
 
-        // Открываем приложение
         open();
 
-        // Ждем загрузку приложения
         Selenide.sleep(5000);
 
         System.out.println("Application ready for testing");
@@ -68,13 +61,11 @@ public class TestBase {
         System.out.println("=== COLLECTING ATTACHMENTS ===");
         System.out.println("Session ID: " + sessionId);
 
-        // Собираем аттачменты
         collectAllAttachments();
 
         System.out.println("Closing web driver...");
         closeWebDriver();
 
-        // Добавляем видео для BrowserStack
         if (sessionId != null && !"null".equals(sessionId)) {
             System.out.println("Adding BrowserStack video...");
             try {
@@ -102,7 +93,6 @@ public class TestBase {
         System.out.println("Failed to collect " + attachmentName + ": " + e.getMessage());
     }
 
-    // Вспомогательные методы для тестов
     protected void waitSeconds(int seconds) {
         System.out.println("Waiting " + seconds + " seconds...");
         Selenide.sleep(seconds * 1000);

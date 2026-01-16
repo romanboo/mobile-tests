@@ -43,7 +43,7 @@ public class WikipediaLocalTest extends LocalTestBase {
 
         step("Navigate to Screen 2", () -> {
             $(By.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")).click();
-            sleep(3000);
+            sleep(1000);
         });
 
         // ЭКРАН 2: New ways to explore
@@ -61,7 +61,7 @@ public class WikipediaLocalTest extends LocalTestBase {
 
         step("Navigate to Screen 3", () -> {
             $(By.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")).click();
-            sleep(3000);
+            sleep(1000);
         });
 
         // ЭКРАН 3: Reading lists with sync
@@ -79,7 +79,7 @@ public class WikipediaLocalTest extends LocalTestBase {
 
         step("Navigate to Screen 4", () -> {
             $(By.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")).click();
-            sleep(3000);
+            sleep(1000);
         });
 
         // ЭКРАН 4: Data & Privacy
@@ -88,7 +88,7 @@ public class WikipediaLocalTest extends LocalTestBase {
                     .shouldBe(visible, Duration.ofSeconds(20))
                     .shouldHave(text("Data & Privacy"));
 
-            // Универсальный поиск кнопки завершения
+            // поиск кнопки завершения
             boolean foundButton = false;
             int buttonCount = $$(By.className("android.widget.Button")).size();
 
@@ -117,7 +117,7 @@ public class WikipediaLocalTest extends LocalTestBase {
         });
 
         step("Verify main screen after onboarding", () -> {
-            sleep(3000); // Ждем переход
+            sleep(1000); // Ждем переход
 
             // Проверяем, что мы на главном экране (поиск доступен)
             $(By.id("org.wikipedia.alpha:id/search_container"))

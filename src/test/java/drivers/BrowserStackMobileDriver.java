@@ -27,7 +27,6 @@ public class BrowserStackMobileDriver implements WebDriverProvider {
     @Nonnull
     @Override
     public WebDriver createDriver(@Nonnull Capabilities capabilities) {
-        // Исправление: проверка на null и значение по умолчанию "android"
         String device = System.getProperty("device", "android");
         if ("ios".equals(device)) {
             return getIosDriver();

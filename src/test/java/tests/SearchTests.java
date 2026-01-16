@@ -83,19 +83,15 @@ public class SearchTests extends TestBase {
                         .getText();
                 System.out.println("First result: " + firstResult);
 
-
-                // Простой клик
                 $$(By.id("org.wikipedia.alpha:id/page_list_item_title"))
                         .first()
                         .click();
 
                 Selenide.sleep(5000);
 
-                // Проверяем поле поиска
                 boolean searchVisible = $(By.id("org.wikipedia.alpha:id/search_src_text")).isDisplayed();
                 System.out.println("Search field visible: " + searchVisible);
 
-                // Проверяем наличие других элементов
                 int textViews = $$(By.className("android.widget.TextView")).size();
                 System.out.println("TextViews found: " + textViews);
 
